@@ -1,6 +1,7 @@
 # app.py
 
 import streamlit as st
+import pandas as pd
 from transformers import pipeline
 
 # ---- Page Config ----
@@ -40,6 +41,17 @@ if st.button("Classify"):
         st.subheader("Results")
         st.write(f"**Text:** {result['sequence']}")
 
+        # ---- Build DataFrame for chart ----
+        df = pd.DataFrame({
+            "Label": result["labels"],
+            "Score": result["scores"]
+        }).set_index("Label")
+
+        # ---- Bar Chart ----
+        st.bar_chart(df)
+
+        # ---- Detailed breakdown ----
+        st.subheader("Detailed Scores")
         for label, score in zip(result['labels'], result['scores']):
             st.write(f"**{label}**")
             st.progress(float(score))
